@@ -1,0 +1,51 @@
+@charset "UTF-8";
+
+/*footer 전체 위치 및 기본 조정*/
+.footer_info{
+	position:relative;
+	bottom:0;
+	width:100%;
+	height:auto;
+	background-color:black;
+	opactiy:0.88;
+	align-items:fixed-end;
+	margin-top:100px;
+	padding:10px 0px 20px 20px;
+	font-family:맑은 고딕;
+}
+
+/*footer의 link 조정*/
+.footer_link{
+	display:inline-block;
+	list-style:none;
+	padding:0 10px 0 10px;
+	margin-left:-25px;
+	margin-right:50px;
+}
+
+.footer_link li{
+	display:inline-block;
+	list-style:none;	/*리스트 불릿 없애기*/
+	padding:0 10px 0 10px;
+	margin-left:-45px;
+	margin-right:50px;
+}
+
+.footer_link li a{
+	text-decoration:none; /*밑줄 없애기*/
+	color:white;	
+}
+
+.footer_info_customer{
+	background-color:black;
+	opactiy:0.88;
+	color:white;
+}
+
+.footer_info_company{
+	color:grey;
+}
+
+.footer_info_company strong{
+	color:white;
+}

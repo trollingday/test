@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="spring.mvc.kyj.dao.ProductDAO">
+
+	<!-- 상품 목록 -->
+	<select id="productList" parameterType="java.util.Map" resultType="spring.mvc.kyj.dto.ProductDTO">
+		<![CDATA[
+			select *
+			from (
+			    select A.*, rownum as rn 
+			        from (
+			        SELECT pdNo, pdName, pdImg, brand, pdsize, price, quantity, status, indate 
+			            FROM mvc_product_tbl
+			        ORDER BY pdNo DESC
+			        ) A
+			)
+			WHERE rn between #{start} and #{end}
+		]]>	
+	</select>
+	
+	<!-- 상품갯수 구하기 -->
+	<select id="productCnt" resultType="Integer">
+		SELECT COUNT(*) FROM mvc_product_tbl
+	</select>
+	
+	<!-- 상품정보 등록 -->
+	<insert id="productInsert" parameterType="spring.mvc.kyj.dto.ProductDTO" >
+		INSERT INTO mvc_product_tbl(pdNo, pdName, pdImg, brand, pdsize, price, quantity, status, indate)
+		VALUES((SELECT NVL(MAX(pdNo)+1,1) FROM mvc_product_tbl),#{pdName},#{pdImg},#{brand},#{pdsize},#{price},#{quantity},#{status},sysdate)	
+	</insert>
+
+	<!-- 상품상세페이지  -->
+	<select id="getProductDetail" parameterType="java.util.Map" resultType="spring.mvc.kyj.dto.ProductDTO">
+		select * from mvc_product_tbl
+		where pdNo = #{pdNo}
+	</select>
+	
+	<!-- 상품정보 수정하기 --> 
+	<update id="productUpdate" parameterType="spring.mvc.kyj.dto.ProductDTO" >
+		UPDATE mvc_product_tbl
+		SET pdName=#{pdName}, pdImg=#{pdImg}, brand=#{brand}, pdsize=#{pdsize}, price=#{price}, quantity=#{quantity}, status=#{status}, indate=sysdate
+		WHERE pdNo = #{pdNo}
+	</update>
+	
+	<!-- 상품정보 삭제하기 -->
+	<delete id="productDelete" parameterType="int">
+		DELETE FROM mvc_product_tbl
+		WHERE pdNo = #{pdNo}
+	</delete>
+	
+	<!-- 상품 진열 -->
+	<select id="productAll" resultType="spring.mvc.kyj.dto.ProductDTO">
+				SELECT DISTINCT pdName,pdImg,brand,price 
+				FROM mvc_product_tbl
+	</select>
+
+</mapper>

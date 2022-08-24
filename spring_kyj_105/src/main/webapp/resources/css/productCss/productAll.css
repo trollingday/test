@@ -1,0 +1,47 @@
+@charset "UTF-8";
+
+@font-face {
+    font-family: 'SEBANG_Gothic_Regular';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2104@1.0/SEBANG_Gothic_Regular.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+#container {
+	width: 100%;
+	margin: 0 auto;
+}
+
+#contents {
+	max-width: 1240px;
+	margin: 0 auto;
+}
+
+/* 콘텐츠 내용 */
+
+#section2 {
+	display:block;
+	justify-contents: space-between;
+	height:auto;
+	overflow:hidden;
+	text-align:center;
+	font-size:17px;
+}
+
+hr {
+    border-bottom-width: thick;
+}
+
+.box{
+	float:left;
+	border:1px solid black;
+	width:380px;
+	height:350px;
+	margin:15px;
+}
+
+.row{
+	display:inline;
+	width:1200px;
+	height:300px;
+}

@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="spring.mvc.kyj.dao.OrderDAO">
+
+	<!-- 주문정보 입력 -->
+	<insert id="InsertOrder" parameterType="spring.mvc.kyj.dto.OrderDTO" >
+		INSERT INTO mvc_order_tbl(orderNo, pdName, brand, pdsize, price, quantity, orderStatus, cusName, orderDate)
+		VALUES((SELECT NVL(MAX(orderNo)+1,1) FROM mvc_order_tbl),#{pdName},#{brand},#{pdsize},#{price},#{quantity},#{orderStatus},#{cusName},sysdate)
+	</insert>
+
+	<!-- 고객 주문목록  -->
+	<select id="cusOrderList" parameterType="String" resultType="spring.mvc.kyj.dto.OrderDTO">
+		SELECT orderNo, pdName, brand, pdsize, price, quantity, orderStatus, cusName, orderdate 
+		FROM mvc_order_tbl            
+		WHERE cusName=#{name} 
+	</select>
+
+	<!-- 관리자 주문목록 -->
+	<select id="orderList" parameterType="java.util.Map" resultType="spring.mvc.kyj.dto.OrderDTO">
+		<![CDATA[
+			select *
+			from (
+			    select A.*, rownum as rn 
+			        from (
+			        SELECT orderNo, pdName, brand, pdsize, price, quantity, orderStatus, cusName, orderdate 
+			            FROM mvc_order_tbl
+			        ORDER BY orderNo DESC
+			        ) A
+			)
+			WHERE rn between #{start} and #{end}
+		]]>	
+	</select>
+	
+	<!-- 주문정보 갯수 세기 -->
+	<select id="orderCnt" resultType="Integer">
+		SELECT COUNT(*) FROM mvc_order_tbl
+	</select>
+	
+	<!-- 주문정보 추출 -->
+	<select id="selectOrder" parameterType="Integer" resultType="spring.mvc.kyj.dto.OrderDTO">
+		SELECT pdName, pdsize, quantity
+		FROM mvc_order_tbl
+		WHERE orderNo=#{orderNo}	
+	</select>	
+	
+	<!-- 재고정보 업데이트 --> 
+	<update id="stockUpdate" parameterType="spring.mvc.kyj.dto.OrderDTO" >
+		UPDATE mvc_product_tbl
+		SET quantity=quantity - #{quantity}
+		WHERE pdName=#{pdName} AND pdsize=#{pdsize}
+		AND quantity > 0
+	</update>
+	
+	<!-- 주문정보 업데이트 --> 
+	<update id="orderUpdate" parameterType="java.util.Map" >
+		UPDATE mvc_order_tbl
+		SET orderStatus = #{state}
+		WHERE orderNo = #{orderNo}
+	</update>
+
+	<!-- 환불 요청 목록 -->
+	<select id="refundList" parameterType="java.util.Map" resultType="spring.mvc.kyj.dto.OrderDTO">
+		<![CDATA[
+			select *
+			from (
+			    select A.*, rownum as rn 
+			        from (
+			        SELECT orderNo, pdName, brand, pdsize, price, quantity, orderStatus, cusName, orderdate 
+			            FROM mvc_order_tbl
+			            WHERE orderStatus = '환불요청'
+			        ORDER BY orderNo DESC
+			        ) A
+			)
+			WHERE rn between #{start} and #{end}
+		]]>	
+	</select>
+	
+	<!-- 환불요청 갯수 세기 -->
+	<select id="refundCnt" resultType="Integer">
+		SELECT COUNT(*) FROM mvc_order_tbl
+		WHERE orderStatus = '환불요청'
+	</select>
+	
+	<!-- 재고정보 업데이트2 --> 
+	<update id="stockUpdate2" parameterType="spring.mvc.kyj.dto.OrderDTO" >
+		UPDATE mvc_product_tbl
+		SET quantity=quantity + #{quantity}
+		WHERE pdName=#{pdName} AND pdsize=#{pdsize}
+	</update>	
+	
+	<!-- 결산 목록 -->
+	<select id="saleHistoryList" parameterType="java.util.Map" resultType="spring.mvc.kyj.dto.OrderDTO">
+		<![CDATA[
+			select *
+			from (
+			    select A.*, rownum as rn 
+			        from (
+			        SELECT orderNo, pdName, brand, pdsize, price, quantity, orderStatus, cusName, orderdate 
+			            FROM mvc_order_tbl
+			            WHERE orderStatus = '결제승인'
+			        ORDER BY orderNo DESC
+			        ) A
+			)
+			WHERE rn between #{start} and #{end}
+		]]>	
+	</select>
+	
+	<!-- 결제승인 갯수 세기 -->
+	<select id="payPermitCnt" resultType="Integer">
+		SELECT COUNT(*) FROM mvc_order_tbl
+		WHERE orderStatus = '결제승인'
+	</select>
+	
+	<!-- 결산 차트 -->
+	<select id="saleChart" resultType="spring.mvc.kyj.dto.ChartDTO">
+		SELECT EXTRACT(MONTH FROM orderdate) month, SUM(price) totalPrice
+		FROM mvc_order_tbl
+		WHERE orderStatus = '결제승인'
+		GROUP BY EXTRACT(MONTH FROM orderdate)
+		ORDER BY month ASC
+	</select>
+	
+</mapper>  

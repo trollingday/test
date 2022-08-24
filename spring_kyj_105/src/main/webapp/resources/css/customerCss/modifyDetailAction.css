@@ -1,0 +1,65 @@
+@charset "UTF-8";
+
+/*추가,상세 CSS*/
+
+#container {
+	width:100%;
+	margin: 0 auto;
+}
+
+#contents {
+	max-width:1024px;
+	min-width:1024px;
+	width:100%;
+	margin: 0 auto;
+}
+
+#section1 {
+	padding:10px 20px 20px 0;
+	border-bottom:5px solid #B1AEB7;
+}
+
+#section2 {
+	padding:10px 20px 20px 0;
+	border-bottom:5px solid #B1AEB7;
+}
+
+#se_inner {
+	width:100%;
+}
+
+.modifyCustomerAction {
+	display:flex;
+	justify-content:center;
+	align-items:center;
+	max-width:auto;
+	margin:40px 10px;
+	height:auto;
+}
+
+.modifyCustomerAction th{
+	font-size:15px;
+	font-weight:bold;
+	width:120px;
+	height:60px;
+	text-align:left;
+	padding-right:10px;
+	padding-left:20px;
+	border-bottom:1px solid #ccc;
+	background:whitesmoke;
+	margin-right:5px;
+}
+
+.modifyCustomerAction td{
+	padding:10px 0 10px 10px;
+	border-bottom:1px solid #ccc;
+}
+
+.input {
+	font-family:'SEBANG_GOTHIC_REGULAR';
+	padding:5px 5px;
+}
+
+
+
+

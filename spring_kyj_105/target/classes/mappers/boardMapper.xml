@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- CDATA : Character Data의 의미 .. 사용법 : 면접 
+   CDATA 영역에 작성된 특수문자데이터는 단순한 문자데이터(Character Data)로 인식하므로
+   XML 파서기가 처리하지 않고, 데이터베이스에 그대로 전달하도록 함으로써 에러가 발생하지 않도록 한다.
+   즉 <>와 같은 부등호를 xml 태그로 인식하지 않고, 단순 문자로 인식(부등호로 인식)하도록 한다.
+   -->
+
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="spring.mvc.kyj.dao.BoardDAO">
+
+	<!-- 게시글 목록 -->
+	<select id="boardList" parameterType="java.util.Map" resultType="spring.mvc.kyj.dto.BoardDTO">
+		<![CDATA[
+			select *
+			from (
+			    select A.*, rownum as rn 
+			        from (
+			        SELECT num, title, content, writer, readCnt, regDate, 
+			        	(SELECT COUNT(*) FROM mvc_board_comment_tbl
+			        	WHERE board_num = b.num) commentCount
+			            FROM mvc_board_tbl b
+			        ORDER BY num DESC
+			        ) A
+			)
+			WHERE rn between #{start} and #{end}
+		]]>	
+	</select>
+ 
+  	<!-- 게시글 갯수 구하기 --> 
+	<select id="boardCnt" resultType="Integer">
+		SELECT COUNT(*) FROM mvc_board_tbl
+	</select>
+
+	<!-- 게시글 입력 --> <!-- I,U,D는 resultType 사용안함 -->
+	<insert id="boardInsert" parameterType="spring.mvc.kyj.dto.BoardDTO" >
+		INSERT INTO mvc_board_tbl(num, title, pdImg, content, writer, readCnt, regDate) 
+		VALUES( #{num}+1, #{title}, #{pdImg}, #{content}, #{writer},#{readCnt},sysdate)
+	</insert>
+	
+	<!-- 게시글 조회수 구하기 --> 
+	<update id="plusReadCnt" parameterType="int" >
+		UPDATE mvc_board_tbl
+		SET readCnt = readCnt + 1
+		WHERE num = #{num}
+	</update>
+	
+	<!-- 게시글 상세페이지 --> 
+	<select id="getBoardDetail" parameterType="int" resultType="spring.mvc.kyj.dto.BoardDTO">
+		select * from mvc_board_tbl
+		where num = #{num} 
+	</select>
+
+	<!-- 댓글 입력 -->
+	<insert id="commentInsert" parameterType="spring.mvc.kyj.dto.BoardCommentDTO" >
+		INSERT INTO mvc_board_comment_tbl(comment_num, board_num, writer, content, reg_date) 
+		VALUES((SELECT NVL(MAX(comment_num)+1,1) FROM mvc_board_comment_tbl),#{board_num},#{writer},#{content},sysdate)
+	</insert>
+	
+	<!-- 댓글목록 --> 
+	<select id="getCommentList" parameterType="int" resultType="spring.mvc.kyj.dto.BoardCommentDTO">
+		select * from mvc_board_comment_tbl
+		where board_num = #{num} order by comment_num ASC
+	</select>
+	
+</mapper>

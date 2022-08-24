@@ -1,0 +1,116 @@
+@charset "UTF-8";
+
+@font-face {
+    font-family: 'SEBANG_Gothic_Regular';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2104@1.0/SEBANG_Gothic_Regular.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+.navbar_title {
+	font-size:25px;
+}
+
+#container {
+	width: 100%;
+	margin: 0 auto;
+}
+
+#contents {
+	max-width: 1240px;
+	min-width: 1240px;
+	width: 100%;
+	margin: 0 auto;
+	min-height: 800px;
+}
+
+#section2 {
+	display: flex;
+	justify-contents: space-between;
+}
+
+hr {
+    border-bottom-width: thick;
+}
+
+/* 왼쪽 메뉴바 */
+#left {
+	width: 12%;
+	background: #404040;
+	margin-top: 20px;
+	height: 100%;
+	border-radius: 10px;
+	margin-right: 50px;
+}
+
+.left_inside {
+	background: whitesmoke;
+	margin: 0 0 0 0;
+	border-radius: 10px;
+	padding: 10px 10px 10px 10px;
+	box-shadow: 10px 10px 10px 10px rgba(0,0,0,0.2);
+    text-align-last: center;
+}
+
+.menubarL {
+	margin-left: -40px;
+}
+
+.menubarL li {
+	list-style: none;
+	align: left;
+}
+
+.menubarL li a {
+	color: black;
+	text-decoration: none;
+}
+
+/* 오른쪽 메뉴바 */
+#right {
+	width:88%;
+}
+
+#section2 {
+	padding:10px 20px 20px 0;
+}
+
+#se_inner {
+	width:100%;
+}
+
+.manager {
+	display:flex;
+	justify-content:center;
+	align-items:center;
+	max-width:auto;
+	margin:40px 10px;
+	height:auto;
+}
+
+.manager th{
+	font-size:15px;
+	font-weight:bold;
+	width:120px;
+	height:60px;
+	text-align:left;
+	padding-right:10px;
+	padding-left:20px;
+	background:gray;
+	margin-right:5px;
+}
+
+.manager td{
+	padding:10px 0 10px 10px;
+	background:#e3ecf2;
+}
+
+.input {
+	font-family:'SEBANG_GOTHIC_REGULAR';
+	padding:5px 5px;
+}
+
+
+
+
+			
