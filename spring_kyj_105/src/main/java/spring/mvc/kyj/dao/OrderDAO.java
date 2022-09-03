@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Map;
 
 import spring.mvc.kyj.dto.ChartDTO;
-import spring.mvc.kyj.dto.CustomerDTO;
 import spring.mvc.kyj.dto.OrderDTO;
 
 public interface OrderDAO {

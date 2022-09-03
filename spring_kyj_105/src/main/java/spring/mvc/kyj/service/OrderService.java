@@ -1,50 +1,37 @@
 package spring.mvc.kyj.service;
 
-import java.util.List;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.ui.Model;
 
-import spring.mvc.kyj.dto.CustomerDTO;
 import spring.mvc.kyj.dto.OrderDTO;
 
 public interface OrderService {
 		
-	public int orderInsert(OrderDTO dto);
+	public void orderInsert(OrderDTO dto, Model model);
 	
-	public List<OrderDTO> orderList(Map<String, Object> map);
+	public void orderList(String pageNum ,Model model);
 	
-	//결제 승인
-	public void payPermit(HttpServletRequest req, Model model);
+	public void payPermit(int orderNo, String orderState, Model model);
 
-	//결제 취소
-	public void payCancel(HttpServletRequest req, Model model);
+	public void payCancel(int orderNo, String orderState, Model model);
 	
-	//고객 주문목록
-	public void cusOrderList(HttpServletRequest req, Model model);
+	public void cusOrderList(String strId, Model model);
 	
-	//구매 취소
-	public void purchasedCancel(HttpServletRequest req, Model model);
+	public void purchasedCancel(int orderNo, String orderState, Model model);
 	
-	//환불 요청
-	public void refundReq(HttpServletRequest req, Model model);
+	public void refundReq(int orderNo, String orderState, Model model);
 	
-	//환불 요청 목록
-	public void refundList(HttpServletRequest req, Model model);
+	public void refundList(String pageNum,Model model);
 	
-	//환불 요청 승인
-	public void refundPermit(HttpServletRequest req, Model model);
+	public void refundPermit(int orderNo, String orderState, Model model);
 	
-	//환불 요청 거절
-	public void refundReject(HttpServletRequest req, Model model);
+	public void refundReject(int orderNo, String orderState, Model model);
 	
-	//결산내역
-	public void saleHistory(HttpServletRequest req, Model model);
+	public void saleHistory(String pageNum, Model model);
 	
-	//결산차트
-	public void saleChart(HttpServletRequest req, Model model);
+	public void saleChart(Model model);
 	
 	//장바구니 목록
 	public void cartList(HttpServletRequest req, Model model);

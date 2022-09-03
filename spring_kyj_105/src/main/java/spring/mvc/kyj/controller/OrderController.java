@@ -1,9 +1,5 @@
 package spring.mvc.kyj.controller;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import javax.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
@@ -13,10 +9,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import spring.mvc.kyj.common.Pagination;
-import spring.mvc.kyj.dao.OrderDAO;
-import spring.mvc.kyj.dto.CartDTO;
-import spring.mvc.kyj.dto.CustomerDTO;
 import spring.mvc.kyj.dto.OrderDTO;
 import spring.mvc.kyj.service.OrderServiceImpl;
 
@@ -27,10 +19,7 @@ public class OrderController {
 	
 	@Autowired
 	OrderServiceImpl service;
-	
-	@Autowired
-	OrderDAO dao;
-	
+
 	//------------- 즉시구매 ---------------
 	
 	//주문정보 입력한다.
@@ -38,11 +27,8 @@ public class OrderController {
 	public String purchasingAction(OrderDTO dto, Model model) {
 		logger.info("[url => purchasingAction.od]");
 		
-		String orderStatus="구매요청";
-		dto.setOrderStatus(orderStatus);
-        int insertCnt = service.orderInsert(dto);      
-        model.addAttribute("insertCnt", insertCnt);	
-        
+		service.orderInsert(dto, model); 
+		
 		return "product/purchasingAction";
 	}
 
@@ -53,107 +39,116 @@ public class OrderController {
 	public String orderList(String pageNum ,Model model) {
 		logger.info("[url => orderList.od]");
 			
-		Pagination paging = new Pagination(pageNum);
-		int total=dao.orderCnt();
-		paging.setTotalCount(total);
-		
-		int start = paging.getStartRow();
-		int end = paging.getEndRow();
-		Map<String, Object> map=new HashMap<String, Object>();
-		map.put("start", start);
-		map.put("end", end);
-							
-		List<OrderDTO> OrderBox = service.orderList(map);
-        
-		model.addAttribute("OrderBox", OrderBox);
-		model.addAttribute("paging",paging);
+		service.orderList(pageNum ,model);
 		
 		return "manager/order/orderList";
 	}	
 	
+	//결제 승인을 한다.
 	@RequestMapping("payPermit.od")
-	public String payPermit(HttpServletRequest req,Model model) {
+	public String payPermit(int orderNo, String orderState, Model model) {
 		logger.info("[url => payPermit.od]");
 		
-		service.payPermit(req, model);
+		service.payPermit(orderNo, orderState, model);
+		
 		return "manager/order/adminOrderAction";
 	}
 
+	
+	//결제취소를 한다.(재고가 없으면)
 	@RequestMapping("payCancel.od")
-	public String payCancel(HttpServletRequest req,Model model) {
+	public String payCancel(int orderNo, String orderState, Model model) {
 		logger.info("[url => payCancel.od]");
 		
-		service.payCancel(req, model);
+		service.payCancel(orderNo, orderState, model);
+		
 		return "manager/order/adminOrderAction";
 	}
 	
 	//------------------고객 주문 ---------------------
 	
+	//고객 주문목록 보여준다.
 	@RequestMapping("customerOrderList.od")
-	public String customerOrderList(HttpServletRequest req,Model model) {
+	public String customerOrderList(HttpServletRequest req, Model model) {
 		logger.info("[url => customerOrderList.od]");
 		
-        service.cusOrderList(req, model);
+		String strId = (String)req.getSession().getAttribute("customerID");
+        service.cusOrderList(strId, model);
+        
 		return "customer/mypage/customerInfo/customerOrderList";
 	}
 	
+	//구매취소를 한다. (결제승인 되기전에만 가능)
 	@RequestMapping("purchasedCancel.od")
-	public String purchasedCancel(HttpServletRequest req,Model model) {
+	public String purchasedCancel(int orderNo, String orderState, Model model) {
 		logger.info("[url => purchasedCancel.od]");
 		
-		service.purchasedCancel(req, model);
+		service.purchasedCancel(orderNo, orderState, model);
+		
 		return "customer/mypage/customerInfo/customerOrderAction";
 	}
 	
+	//환불요청을 한다. (결제승인 후에 가능)
 	@RequestMapping("/refundReq.od")
-	public String refundReq(HttpServletRequest req,Model model) {
+	public String refundReq(int orderNo, String orderState, Model model) {
 		logger.info("[url => /refundReq.od]");
 		
-		service.refundReq(req, model);
+		service.refundReq(orderNo, orderState, model);
+		
 		return "customer/mypage/customerInfo/customerOrderAction";
 	}
 		
 	//----------------환불 관리-----------------
 	
+	//환불 요청 목록을 보여준다.
 	@RequestMapping("/refundList.od")
-	public String refundList(HttpServletRequest req,Model model) {
+	public String refundList(String pageNum,Model model) {
 		logger.info("[url => /refundList.od]");
 		
-		service.refundList(req, model);
+		service.refundList(pageNum, model);
+		
 		return "manager/order/refundList";
 	}
 	
+	//환불요청 승인을 한다.
 	@RequestMapping("/refundPermit.od")
-	public String refundPermit(HttpServletRequest req,Model model) {
+	public String refundPermit(int orderNo, String orderState, Model model) {
 		logger.info("[url => /refundPermit.od]");
 		
-		service.refundPermit(req, model);
+		service.refundPermit(orderNo, orderState, model);
+		
 		return "manager/order/refundAction";
 	}
 	 
+	//환불요청 거절을 한다.
 	@RequestMapping("/refundReject.od")
-	public String refundReject(HttpServletRequest req,Model model) {
+	public String refundReject(int orderNo, String orderState, Model model) {
 		logger.info("[url => /refundReject.od]");
 		
-		service.refundReject(req, model);
+		service.refundReject(orderNo, orderState, model);
+		
 		return "manager/order/refundAction";
 	}
 		
 	//--------------결산--------------
 	
+	//결산내역을 보여준다.
 	@RequestMapping("/saleHistory.od")
-	public String saleHistory(HttpServletRequest req,Model model) {
+	public String saleHistory(String pageNum, Model model) {
 		logger.info("[url => /saleHistory.od]");
 		
-		service.saleHistory(req, model);
+		service.saleHistory(pageNum, model);
+		
 		return "manager/order/saleHistory";
 	}
 	
+	//결산 차트를 보여준다.
 	@RequestMapping("/saleChart.od")
-	public String saleChart(HttpServletRequest req,Model model) {
+	public String saleChart(Model model) {
 		logger.info("[url => /saleChart.od]");
 		
-		service.saleChart(req, model);
+		service.saleChart(model);
+		
 		return "manager/order/saleChart";
 	}
 	

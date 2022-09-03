@@ -1,22 +1,22 @@
 package spring.mvc.kyj.service;
 
-import java.util.List;
-import java.util.Map;
+import org.springframework.ui.Model;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import spring.mvc.kyj.dto.ProductDTO;
 
 public interface ProductService {
 	
-	public List<ProductDTO> productList(Map<String, Object> map);
+	public void productList(String pageNum, Model model);
 	
-	public int productAddAction(ProductDTO dto);
+	public void productAddAction(MultipartHttpServletRequest req, ProductDTO dto, Model model);
 
-	public ProductDTO productDetail(Map<String, Object> map);
+	public void productDetail(Model model, int pdNo, int pageNum);
 
-	public int productUpdateAction(ProductDTO dto);
+	public void productUpdateAction(MultipartHttpServletRequest req, Model model, ProductDTO dto, String pageNum);
 	
-	public int productDeleteAction(int pdNo);
+	public void productDeleteAction(int pdNo, int pageNum, Model model);
 
-	public  List<ProductDTO> productAll();
+	public void productAll(Model model);
 	
 }

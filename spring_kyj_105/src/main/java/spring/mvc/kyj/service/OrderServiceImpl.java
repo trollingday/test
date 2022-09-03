@@ -28,25 +28,34 @@ public class OrderServiceImpl implements OrderService {
 	CustomerDAO dao2;
 	
 	@Override
-	public int orderInsert(OrderDTO dto) {
-		return dao.InsertOrder(dto);				
+	public void orderInsert(OrderDTO dto, Model model) {		
+		String orderStatus="구매요청";
+		dto.setOrderStatus(orderStatus);
+        int insertCnt = dao.InsertOrder(dto);     
+        model.addAttribute("insertCnt", insertCnt);				
 	}
 
 	@Override
-	public List<OrderDTO> orderList(Map<String, Object> map) {
-		return dao.orderList(map);			
+	public void orderList(String pageNum ,Model model) {		
+		Pagination paging = new Pagination(pageNum);
+		int total=dao.orderCnt();
+		paging.setTotalCount(total);
+		
+		int start = paging.getStartRow();
+		int end = paging.getEndRow();
+		Map<String, Object> map=new HashMap<String, Object>();
+		map.put("start", start);
+		map.put("end", end);
+							
+		List<OrderDTO> OrderBox = dao.orderList(map);
+        
+		model.addAttribute("OrderBox", OrderBox);
+		model.addAttribute("paging",paging);		
 	}
 	
-	//결제 승인을 한다.
 	@Override
-	public void payPermit(HttpServletRequest req, Model model) {
-		
-		System.out.println("서비스 - payPermit");
-		
+	public void payPermit(int orderNo, String orderState, Model model) {		
 		int payResult = -99;
-		
-		int orderNo=Integer.parseInt(req.getParameter("orderNo"));
-		String orderState = req.getParameter("orderState");
 		
 		if(orderState.equals("구매요청")) {
 					
@@ -66,7 +75,7 @@ public class OrderServiceImpl implements OrderService {
 				map.put("orderNo", orderNo);
 				map.put("state", state);
 				
-				int updateCnt2 = dao.orderUpdate(map);	
+				dao.orderUpdate(map);	
 				payResult = 1;
 			} else {
 				payResult = -1;
@@ -75,17 +84,10 @@ public class OrderServiceImpl implements OrderService {
 		
 		model.addAttribute("payResult",payResult);
 	}
-	
-	//결제취소를 한다.(재고가 없으면)
+
 	@Override
-	public void payCancel(HttpServletRequest req, Model model) {
-		
-		System.out.println("서비스 - payCancel");
-		
+	public void payCancel(int orderNo, String orderState, Model model) {
 		int payResult=-99;
-		
-		int orderNo=Integer.parseInt(req.getParameter("orderNo"));
-		String orderState = req.getParameter("orderState");
 		
 		if(orderState.equals("구매요청")) {
 											
@@ -96,41 +98,27 @@ public class OrderServiceImpl implements OrderService {
 			map.put("orderNo", orderNo);
 			map.put("state", state);
 			
-			int updateCnt = dao.orderUpdate(map);	
+			dao.orderUpdate(map);	
 			payResult=0;		
 		}		
 		
 		model.addAttribute("payResult",payResult);
 	}
 
-	//고객 주문목록 보여준다.
 	@Override
-	public void cusOrderList(HttpServletRequest req, Model model) {
-		
-		System.out.println("서비스 - cusOrderList");
-		
-		String strId = (String)req.getSession().getAttribute("customerID");
-		
+	public void cusOrderList(String strId, Model model) {		
 		CustomerDTO dto = dao2.getCustomerDetail(strId);
 		
 		List<OrderDTO> OrderBox = dao.cusOrderList(dto.getName());
 			
-		model.addAttribute("OrderBox", OrderBox);		
-		
+		model.addAttribute("OrderBox", OrderBox);			
 	}
 	
-	//구매취소를 한다. (결제승인 되기전에만 가능)
 	@Override
-	public void purchasedCancel(HttpServletRequest req, Model model) {
-		
-		System.out.println("서비스 - purchasedCancel");
+	public void purchasedCancel(int orderNo, String orderState, Model model) {
 		
 		int buyResult=-99;
-		
-		//1.주문번호 받고
-		int orderNo=Integer.parseInt(req.getParameter("orderNo"));
-		String orderState = req.getParameter("orderState");
-		
+				
 		if(orderState.equals("구매요청")) {
 	
 			//2.주문테이블에서 주문상태 변경
@@ -149,17 +137,10 @@ public class OrderServiceImpl implements OrderService {
 		model.addAttribute("buyResult",buyResult);
 	}
 
-	//환불요청을 한다. (결제승인 후에 가능)
 	@Override
-	public void refundReq(HttpServletRequest req, Model model) {
-		
-		System.out.println("서비스 - refundReq");
+	public void refundReq(int orderNo, String orderState, Model model) {
 		
 		int buyResult=-99;
-		
-		//1.주문번호 받고
-		int orderNo=Integer.parseInt(req.getParameter("orderNo"));
-		String orderState = req.getParameter("orderState");
 		
 		if(orderState.equals("결제승인")) {
 			
@@ -180,14 +161,9 @@ public class OrderServiceImpl implements OrderService {
 		model.addAttribute("buyResult",buyResult);
 	}
 
-	//환불 요청 목록을 보여준다.
 	@Override
-	public void refundList(HttpServletRequest req, Model model) {
-		
-		System.out.println("서비스 - refundList");
-		
-		String pageNum=req.getParameter("pageNum");
-	
+	public void refundList(String pageNum, Model model) {
+			
 		Pagination paging = new Pagination(pageNum);
 		
 		int total=dao.refundCnt();
@@ -208,17 +184,11 @@ public class OrderServiceImpl implements OrderService {
 		
 	}
 
-	//환불요청 승인을 한다.
 	@Override
-	public void refundPermit(HttpServletRequest req, Model model) {
-		
-		System.out.println("서비스 - refundPermit");
-		
+	public void refundPermit(int orderNo, String orderState, Model model) {
+
 		int refundResult = -99;
-		
-		int orderNo=Integer.parseInt(req.getParameter("orderNo"));
-		String orderState = req.getParameter("orderState");
-		
+
 		if(orderState.equals("환불요청")) {
 	
 			//1.주문정보에서 상품이름,상품사이즈,상품수량 정보 추출
@@ -245,17 +215,10 @@ public class OrderServiceImpl implements OrderService {
 		model.addAttribute("refundResult",refundResult);
 	}
 	
-	//환불요청 거절을 한다.
 	@Override
-	public void refundReject(HttpServletRequest req, Model model) {
+	public void refundReject(int orderNo, String orderState, Model model) {
 
-		System.out.println("서비스 - refundReject");
-		
 		int refundResult = -99;
-		
-		//1.주문번호 받고
-		int orderNo=Integer.parseInt(req.getParameter("orderNo"));
-		String orderState = req.getParameter("orderState");
 		
 		if(orderState.equals("환불요청")) {
 			
@@ -276,14 +239,9 @@ public class OrderServiceImpl implements OrderService {
 		model.addAttribute("refundResult",refundResult);
 	}
 
-	//결산내역을 보여준다.
 	@Override
-	public void saleHistory(HttpServletRequest req, Model model) {
+	public void saleHistory(String pageNum, Model model) {
 		
-		System.out.println("서비스 - saleHistory");
-
-		String pageNum=req.getParameter("pageNum");
-
 		Pagination paging = new Pagination(pageNum);
 		
 		int total=dao.payPermitCnt();
@@ -304,12 +262,9 @@ public class OrderServiceImpl implements OrderService {
 		
 	}
 	
-	//결산 차트를 보여준다.
 	@Override
-	public void saleChart(HttpServletRequest req, Model model) {
-		
-		System.out.println("서비스 - saleChart");
-		
+	public void saleChart(Model model) {
+
 		int[] totalPrice = new int[12];
 		int cnt=0;
 		
@@ -326,42 +281,45 @@ public class OrderServiceImpl implements OrderService {
 				int month=Integer.parseInt(chartBox.get(i).getMonth());
 				cnt=cnt+1;
 				
-				if(month==1) {
-					totalPrice[0] = chartBox.get(i).getTotalPrice();
+				switch(month) {
+				    case 1:
+				    	totalPrice[0] = chartBox.get(i).getTotalPrice();				    	
+			        break;				
+				    case 2:
+				    	totalPrice[1] = chartBox.get(i).getTotalPrice();				    	
+			        break;					
+				    case 3:
+				    	totalPrice[2] = chartBox.get(i).getTotalPrice();				    	
+			        break;					
+				    case 4:
+				    	totalPrice[3] = chartBox.get(i).getTotalPrice();				    	
+			        break;					
+				    case 5:
+				    	totalPrice[4] = chartBox.get(i).getTotalPrice();				    	
+			        break;					
+				    case 6:
+				    	totalPrice[5] = chartBox.get(i).getTotalPrice();				    	
+			        break;	
+				    case 7:
+				    	totalPrice[6] = chartBox.get(i).getTotalPrice();				    	
+			        break;				
+				    case 8:
+				    	totalPrice[7] = chartBox.get(i).getTotalPrice();				    	
+			        break;					
+				    case 9:
+				    	totalPrice[8] = chartBox.get(i).getTotalPrice();				    	
+			        break;					
+				    case 10:
+				    	totalPrice[9] = chartBox.get(i).getTotalPrice();				    	
+			        break;					
+				    case 11:
+				    	totalPrice[10] = chartBox.get(i).getTotalPrice();				    	
+			        break;					
+				    case 12:
+				    	totalPrice[11] = chartBox.get(i).getTotalPrice();				    	
+			        break;			        
+			        	
 				}
-				else if(month==2) {
-					totalPrice[1] = chartBox.get(i).getTotalPrice();
-				}
-				else if(month==3) {
-					totalPrice[2] = chartBox.get(i).getTotalPrice();
-				}
-				else if(month==4) {
-					totalPrice[3] = chartBox.get(i).getTotalPrice();
-				}
-				else if(month==5) {
-					totalPrice[4] = chartBox.get(i).getTotalPrice();
-				}
-				else if(month==6) {
-					totalPrice[5] = chartBox.get(i).getTotalPrice();
-				}
-				else if(month==7) {
-					totalPrice[6] = chartBox.get(i).getTotalPrice();
-				}
-				else if(month==8) {
-					totalPrice[7] = chartBox.get(i).getTotalPrice();
-				}
-				else if(month==9) {
-					totalPrice[8] = chartBox.get(i).getTotalPrice();
-				}
-				else if(month==10) {
-					totalPrice[9] = chartBox.get(i).getTotalPrice();
-				}
-				else if(month==11) {
-					totalPrice[10] = chartBox.get(i).getTotalPrice();
-				}
-				else if(month==12) {
-					totalPrice[11] = chartBox.get(i).getTotalPrice();
-				} 
 						
 			} else {
 				break;

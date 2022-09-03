@@ -15,20 +15,11 @@
 <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 <script>
 
-var array=[0,0,0,0,0,0,0,0,0,0,0,0];
+var array = [];
 
-array[0]=${totalPrice[0]}
-array[1]=${totalPrice[1]}	
-array[2]=${totalPrice[2]}		
-array[3]=${totalPrice[3]}
-array[4]=${totalPrice[4]}	
-array[5]=${totalPrice[5]}	
-array[6]=${totalPrice[6]}
-array[7]=${totalPrice[7]}	
-array[8]=${totalPrice[8]}		
-array[9]=${totalPrice[9]}
-array[10]=${totalPrice[10]}	
-array[11]=${totalPrice[11]}		
+for(var i=0;i<12;i++){
+	array[i]=${totalPrice[i]}	
+}
 		
 //차트 정보 설정
 function drawVisualization() {
