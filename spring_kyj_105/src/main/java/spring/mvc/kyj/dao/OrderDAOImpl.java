@@ -23,14 +23,9 @@ public class OrderDAOImpl implements OrderDAO {
 		return dao.InsertOrder(dto);
 	}
 
-	//DB에서 모든 주문정보 검색
 	@Override
 	public List<OrderDTO> orderList(Map<String, Object> map) {
-
-		System.out.println("DAO - orderList");
-		
-		OrderDAO dao = sqlSession.getMapper(OrderDAO.class);
-		
+		OrderDAO dao = sqlSession.getMapper(OrderDAO.class);		
 		return dao.orderList(map);		
 	}
 

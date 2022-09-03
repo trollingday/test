@@ -1,5 +1,7 @@
 package spring.mvc.kyj.service;
 
+import java.sql.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -13,17 +15,25 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.ui.Model;
 
+import spring.mvc.kyj.common.EmailChkHandler;
+import spring.mvc.kyj.common.Pagination;
 import spring.mvc.kyj.common.SettingValues;
 import spring.mvc.kyj.dao.CustomerDAO;
 import spring.mvc.kyj.dto.CustomerDTO;
+import spring.mvc.kyj.dto.JoinFormDTO;
 
 @Service
 public class CustomerServiceImpl implements CustomerService{
 
 	@Autowired
 	CustomerDAO dao;
+	
+    @Autowired
+    BCryptPasswordEncoder passwordEncoder;   // 비밀번호 암호화 클래스
 				
 	@Override
 	public int confirmIdAction(String id) {		
@@ -31,7 +41,46 @@ public class CustomerServiceImpl implements CustomerService{
 	}
 
 	@Override
-	public void signInAction(CustomerDTO dto) {
+	public void signInAction(JoinFormDTO data) {
+		
+		CustomerDTO dto = new CustomerDTO();
+		
+		dto.setId(data.getId());
+				
+		dto.setName(data.getName());
+		
+		Date date=Date.valueOf(data.getBirthday());
+		dto.setBirthday(date);
+		
+		dto.setAddress(data.getAddress());
+		
+		String hp="";
+		String strHp1=data.getHp1();
+		String strHp2=data.getHp2();
+		String strHp3=data.getHp3();
+		
+		if(!strHp1.equals("")&&!strHp2.equals("")&&!strHp3.equals("")) {
+			hp=strHp1+"-"+strHp2+"-"+strHp3;	
+		}
+		
+		dto.setHp(hp);
+		
+		String email="";
+		String strEmail1=data.getEmail1();
+		String strEmail2=data.getEmail2();
+		email=strEmail1+"@"+strEmail2;
+		dto.setEmail(email);
+			
+		// 시큐리티 작업 - 비밀번호 암호화, 키 생성
+		String password = data.getPassword();
+		String encryptPassword = passwordEncoder.encode(password);		
+		dto.setPassword(encryptPassword);
+		
+	    String key = EmailChkHandler.getKey();
+	    dto.setKey(key);   
+	    dto.setAuthority("ROLE_USER");
+	    dto.setEnabled("0");
+		
 		int insertCnt=dao.insertCustomer(dto);
 		
         // 시큐리티 - 가입성공시 이메일인증을 위해 이메일 전송
@@ -57,7 +106,41 @@ public class CustomerServiceImpl implements CustomerService{
 	}
 
 	@Override
-	public int modifyCustomerAction(CustomerDTO dto) {	
+	public int modifyCustomerAction(JoinFormDTO data) {	
+		
+		CustomerDTO dto = new CustomerDTO();
+		
+		dto.setId(data.getId());
+				
+		dto.setName(data.getName());
+		
+		Date date=Date.valueOf(data.getBirthday());
+		dto.setBirthday(date);
+		
+		dto.setAddress(data.getAddress());
+		
+		String hp="";
+		String strHp1=data.getHp1();
+		String strHp2=data.getHp2();
+		String strHp3=data.getHp3();
+		
+		if(!strHp1.equals("")&&!strHp2.equals("")&&!strHp3.equals("")) {
+			hp=strHp1+"-"+strHp2+"-"+strHp3;	
+		}
+		
+		dto.setHp(hp);
+		
+		String email="";
+		String strEmail1=data.getEmail1();
+		String strEmail2=data.getEmail2();
+		email=strEmail1+"@"+strEmail2;
+		dto.setEmail(email);
+		
+		// 시큐리티 작업 - 비밀번호 암호화
+		String password = data.getPassword();
+		String encryptPassword = passwordEncoder.encode(password);		
+		dto.setPassword(encryptPassword);
+		
 		return dao.updateCustomer(dto); 
 	}	
 	
@@ -67,8 +150,25 @@ public class CustomerServiceImpl implements CustomerService{
 	}
 
 	@Override
-	public List<CustomerDTO> memberList(Map<String, Object> map) {
-		return dao.memberList(map);
+	public void memberList(String pageNum, Model model) {	
+		
+		//페이징 계산
+		Pagination paging = new Pagination(pageNum);
+		int total=dao.memberCnt();
+		paging.setTotalCount(total);	
+		int start = paging.getStartRow();
+		int end = paging.getEndRow();
+		
+		//페이징된 데이터 가져오기
+		Map<String, Object> map=new HashMap<String, Object>();		
+		map.put("start", start);
+		map.put("end", end);
+		
+		List<CustomerDTO> memberBox = dao.memberList(map);
+		
+		model.addAttribute("memberBox", memberBox);
+		model.addAttribute("paging",paging);
+		
 	}
 	
 	@Override

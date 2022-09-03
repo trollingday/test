@@ -1,10 +1,5 @@
 package spring.mvc.kyj.controller;
 
-import java.sql.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.ui.Model;
@@ -12,13 +7,9 @@ import org.springframework.ui.Model;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import spring.mvc.kyj.common.EmailChkHandler;
-import spring.mvc.kyj.common.Pagination;
-import spring.mvc.kyj.dao.CustomerDAO;
 import spring.mvc.kyj.dto.CartDTO;
 import spring.mvc.kyj.dto.CustomerDTO;
 import spring.mvc.kyj.dto.JoinFormDTO;
@@ -31,16 +22,11 @@ public class CustomerController {
 	
 	@Autowired
 	CustomerServiceImpl service;
-	
-    @Autowired
-    BCryptPasswordEncoder passwordEncoder;   // 비밀번호 암호화 클래스
-    
-	@Autowired
-	CustomerDAO dao;
-	
+
 	@RequestMapping("/")
 	public String index() {
 		logger.info("[url => index]");
+		
 		return "common/main";
 	}
 	
@@ -50,6 +36,7 @@ public class CustomerController {
 	@RequestMapping("main.do")
 	public String main() {
 		logger.info("[url => main.do]");
+		
 		return "common/main";
 	}
 	
@@ -65,13 +52,12 @@ public class CustomerController {
 	
 	//ID중복확인
 	@RequestMapping("confirmIdAction.do")
-	public String confirmIdAction(HttpServletRequest req, String id, Model model) {
-		logger.info("[url => confirmIdAction.do]");
-					
-		int selectCnt = service.confirmIdAction(id);
+	public String confirmIdAction(String id, Model model) {
+		logger.info("[url => confirmIdAction.do]");		
 		
+		int selectCnt = service.confirmIdAction(id);	
 		model.addAttribute("id", id);
-		model.addAttribute("selectCnt", selectCnt);
+		model.addAttribute("selectCnt", selectCnt);		
 		
 		return "customer/join/confirmIdAction";
 	}
@@ -79,48 +65,9 @@ public class CustomerController {
 	//회원가입
 	@RequestMapping("joinAction.do")
 	public String joinAction(JoinFormDTO data) {
-		logger.info("[url => joinAction.do]");
-			
-		CustomerDTO dto = new CustomerDTO();
+		logger.info("[url => joinAction.do]");			
 		
-		dto.setId(data.getId());
-				
-		dto.setName(data.getName());
-		
-		Date date=Date.valueOf(data.getBirthday());
-		dto.setBirthday(date);
-		
-		dto.setAddress(data.getAddress());
-		
-		String hp="";
-		String strHp1=data.getHp1();
-		String strHp2=data.getHp2();
-		String strHp3=data.getHp3();
-		
-		if(!strHp1.equals("")&&!strHp2.equals("")&&!strHp3.equals("")) {
-			hp=strHp1+"-"+strHp2+"-"+strHp3;	
-		}
-		
-		dto.setHp(hp);
-		
-		String email="";
-		String strEmail1=data.getEmail1();
-		String strEmail2=data.getEmail2();
-		email=strEmail1+"@"+strEmail2;
-		dto.setEmail(email);
-			
-		// 시큐리티 작업 - 비밀번호 암호화, 키 생성
-		String password = data.getPassword();
-		String encryptPassword = passwordEncoder.encode(password);		
-		dto.setPassword(encryptPassword);
-		
-	    String key = EmailChkHandler.getKey();
-	    dto.setKey(key);   
-	    dto.setAuthority("ROLE_USER");
-	    dto.setEnabled("0");
-	    
-	    //데이터를 가공한다음에 dto에 담아서 보낸다.
-		service.signInAction(dto);
+		service.signInAction(data);		
 		
 		return "common/main";
 	}
@@ -152,6 +99,7 @@ public class CustomerController {
 		logger.info("[url => logout.do]");
 		
 		req.getSession().invalidate();
+		
 		return "common/main";
 	}
 	
@@ -181,41 +129,8 @@ public class CustomerController {
 	@RequestMapping("modifyCustomerAction.do")
 	public String modifyCustomerAction(JoinFormDTO data, Model model) {
 		logger.info("[url => modifyCustomerAction.do]");
-		
-		CustomerDTO dto = new CustomerDTO();
-		
-		dto.setId(data.getId());
 				
-		dto.setName(data.getName());
-		
-		Date date=Date.valueOf(data.getBirthday());
-		dto.setBirthday(date);
-		
-		dto.setAddress(data.getAddress());
-		
-		String hp="";
-		String strHp1=data.getHp1();
-		String strHp2=data.getHp2();
-		String strHp3=data.getHp3();
-		
-		if(!strHp1.equals("")&&!strHp2.equals("")&&!strHp3.equals("")) {
-			hp=strHp1+"-"+strHp2+"-"+strHp3;	
-		}
-		
-		dto.setHp(hp);
-		
-		String email="";
-		String strEmail1=data.getEmail1();
-		String strEmail2=data.getEmail2();
-		email=strEmail1+"@"+strEmail2;
-		dto.setEmail(email);
-		
-		// 시큐리티 작업 - 비밀번호 암호화
-		String password = data.getPassword();
-		String encryptPassword = passwordEncoder.encode(password);		
-		dto.setPassword(encryptPassword);
-		
-		int updateCnt = service.modifyCustomerAction(dto);
+		int updateCnt = service.modifyCustomerAction(data);
 		model.addAttribute("updateCnt", updateCnt);
 		
 		return "customer/mypage/customerInfo/modifyCustomerAction";
@@ -239,24 +154,10 @@ public class CustomerController {
 	
 	//관리자를 제외한 회원목록을 보여준다.
 	@RequestMapping("memberList.do")
-	public String memberList(HttpServletRequest req, Model model, String pageNum) {
+	public String memberList(String pageNum, Model model) {
 		logger.info("[url => memberList.do]");
-				
-		//페이징 계산
-		Pagination paging = new Pagination(pageNum);
-		int total=dao.memberCnt();
-		paging.setTotalCount(total);	
-		int start = paging.getStartRow();
-		int end = paging.getEndRow();
-		
-		//페이징된 데이터 가져오기
-		Map<String, Object> map=new HashMap<String, Object>();		
-		map.put("start", start);
-		map.put("end", end);
-		List<CustomerDTO> memberBox = service.memberList(map);
-			
-		model.addAttribute("memberBox", memberBox);
-		model.addAttribute("paging",paging);
+						
+		service.memberList(pageNum, model);			
 		
 		return "manager/member/memberList";
 	}
