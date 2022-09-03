@@ -23,4 +23,6 @@ public interface CustomerService {
 	
 	public void sendEmail(String email, String key);
 	
+	public CustomerDTO purchasingDetail(String strId);
+	
 }

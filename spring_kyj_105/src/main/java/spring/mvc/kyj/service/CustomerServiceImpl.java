@@ -134,6 +134,11 @@ public class CustomerServiceImpl implements CustomerService{
 		
 	}
 
+	@Override
+	public CustomerDTO purchasingDetail(String strId) {
+		return dao.getCustomerDetail(strId);		
+	}
+	
 }
 
 	

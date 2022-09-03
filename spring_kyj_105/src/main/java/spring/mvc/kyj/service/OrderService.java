@@ -1,5 +1,8 @@
 package spring.mvc.kyj.service;
 
+import java.util.List;
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.ui.Model;
@@ -8,14 +11,10 @@ import spring.mvc.kyj.dto.CustomerDTO;
 import spring.mvc.kyj.dto.OrderDTO;
 
 public interface OrderService {
-	
-	//결제 상세페이지
-	public CustomerDTO purchasingDetail(String strId);
-	
+		
 	public int orderInsert(OrderDTO dto);
 	
-	//관리자 주문목록
-	public void orderList(HttpServletRequest req, Model model);
+	public List<OrderDTO> orderList(Map<String, Object> map);
 	
 	//결제 승인
 	public void payPermit(HttpServletRequest req, Model model);

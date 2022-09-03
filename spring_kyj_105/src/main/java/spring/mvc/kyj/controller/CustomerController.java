@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import spring.mvc.kyj.common.EmailChkHandler;
 import spring.mvc.kyj.common.Pagination;
 import spring.mvc.kyj.dao.CustomerDAO;
+import spring.mvc.kyj.dto.CartDTO;
 import spring.mvc.kyj.dto.CustomerDTO;
 import spring.mvc.kyj.dto.JoinFormDTO;
 import spring.mvc.kyj.service.CustomerServiceImpl;
@@ -258,6 +259,27 @@ public class CustomerController {
 		model.addAttribute("paging",paging);
 		
 		return "manager/member/memberList";
+	}
+	
+	//즉시구매 상세페이지를 보여준다.
+	@RequestMapping("purchasing.od")
+	public String purchasing(HttpServletRequest req, CartDTO dto1, Model model) {
+		logger.info("[url => purchasing.od]");
+		
+		int charge;
+		
+		if(dto1.getPrice()<30000) charge=3000;
+		else charge=0;
+		
+		String strId=(String)req.getSession().getAttribute("customerID");
+		
+		CustomerDTO dto2 = service.purchasingDetail(strId); 
+		
+		model.addAttribute("dto01",dto1);
+		model.addAttribute("dto02",dto2);
+		model.addAttribute("charge",charge);
+		
+		return "product/purchasing";
 	}
 	
 }

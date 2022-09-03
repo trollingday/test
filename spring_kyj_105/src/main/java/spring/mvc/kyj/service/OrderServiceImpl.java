@@ -26,47 +26,15 @@ public class OrderServiceImpl implements OrderService {
 	
 	@Autowired	
 	CustomerDAO dao2;
-
-	//즉시구매 상세페이지를 보여준다.
-	@Override
-	public CustomerDTO purchasingDetail(String strId) {
-		return dao2.getCustomerDetail(strId);		
-	}
 	
 	@Override
 	public int orderInsert(OrderDTO dto) {
 		return dao.InsertOrder(dto);				
 	}
 
-    //관리자 주문목록을 보여준다.
 	@Override
-	public void orderList(HttpServletRequest req, Model model) {
-				
-		System.out.println("서비스 - orderList");
-		
-		String pageNum=req.getParameter("pageNum");
-	
-		Pagination paging = new Pagination(pageNum);
-		
-		//전체 게시글 갯수 카운트
-		int total=dao.orderCnt();
-		paging.setTotalCount(total);
-		
-		int start = paging.getStartRow();
-		int end = paging.getEndRow();
-		
-		Map<String, Object> map=new HashMap<String, Object>();
-		
-		map.put("start", start);
-		map.put("end", end);
-		
-		//5단계 
-		List<OrderDTO> OrderBox = dao.orderList(map);
-			
-		//6단계 
-		model.addAttribute("OrderBox", OrderBox);
-		model.addAttribute("paging",paging);		
-		
+	public List<OrderDTO> orderList(Map<String, Object> map) {
+		return dao.orderList(map);			
 	}
 	
 	//결제 승인을 한다.

@@ -1,5 +1,9 @@
 package spring.mvc.kyj.controller;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
@@ -9,6 +13,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import spring.mvc.kyj.common.Pagination;
+import spring.mvc.kyj.dao.OrderDAO;
 import spring.mvc.kyj.dto.CartDTO;
 import spring.mvc.kyj.dto.CustomerDTO;
 import spring.mvc.kyj.dto.OrderDTO;
@@ -22,28 +28,11 @@ public class OrderController {
 	@Autowired
 	OrderServiceImpl service;
 	
+	@Autowired
+	OrderDAO dao;
+	
 	//------------- 즉시구매 ---------------
 	
-	@RequestMapping("purchasing.od")
-	public String purchasing(HttpServletRequest req, CartDTO dto1, Model model) {
-		logger.info("[url => purchasing.od]");
-		
-		int charge;
-		
-		if(dto1.getPrice()<30000) charge=3000;
-		else charge=0;
-		
-		String strId=(String)req.getSession().getAttribute("customerID");
-		
-		CustomerDTO dto2 = service.purchasingDetail(strId); 
-		
-		model.addAttribute("dto01",dto1);
-		model.addAttribute("dto02",dto2);
-		model.addAttribute("charge",charge);
-		
-		return "product/purchasing";
-	}
-
 	//주문정보 입력한다.
 	@RequestMapping("purchasingAction.od")
 	public String purchasingAction(OrderDTO dto, Model model) {
@@ -59,11 +48,26 @@ public class OrderController {
 
 	//-------------- 결제관리 ---------------
 	
+    //관리자 주문목록을 보여준다.
 	@RequestMapping("orderList.od")
-	public String orderList(HttpServletRequest req,Model model) {
+	public String orderList(String pageNum ,Model model) {
 		logger.info("[url => orderList.od]");
+			
+		Pagination paging = new Pagination(pageNum);
+		int total=dao.orderCnt();
+		paging.setTotalCount(total);
 		
-        service.orderList(req, model);
+		int start = paging.getStartRow();
+		int end = paging.getEndRow();
+		Map<String, Object> map=new HashMap<String, Object>();
+		map.put("start", start);
+		map.put("end", end);
+							
+		List<OrderDTO> OrderBox = service.orderList(map);
+        
+		model.addAttribute("OrderBox", OrderBox);
+		model.addAttribute("paging",paging);
+		
 		return "manager/order/orderList";
 	}	
 	
