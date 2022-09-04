@@ -9,6 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import spring.mvc.kyj.dto.CartDTO;
 import spring.mvc.kyj.dto.OrderDTO;
 import spring.mvc.kyj.service.OrderServiceImpl;
 
@@ -154,22 +155,25 @@ public class OrderController {
 	
 	//------------------장바구니----------------------
 	
+	//장바구니에 담기
 	@RequestMapping("/cartAdd.od")
-	public String cartAdd(HttpServletRequest req,Model model) {
+	public String cartAdd(HttpServletRequest req, CartDTO dto,Model model) {
 		logger.info("[url => /cartAdd.od]");
 		
-		service.cartAdd(req, model);
+		service.cartAdd(req, dto, model);
+		
 		return "customer/cart/cartList";
 	}
 	
+	//장바구니 목록
 	@RequestMapping("/cartList.od")
 	public String cartList(HttpServletRequest req,Model model) {
 		logger.info("[url => /cartList.od]");
-		
-		service.cartList(req, model);
+				
 		return "customer/cart/cartList";
 	}
 	
+	//장바구니 빼기
 	@RequestMapping("/cartRemove.od")
 	public String cartRemove(HttpServletRequest req,Model model) {
 		logger.info("[url => /cartRemove.od]");
@@ -178,11 +182,13 @@ public class OrderController {
 		return "customer/cart/cartList";
 	}
 	
+	//장바구니 담은 물건 결제
 	@RequestMapping("/cartPay.od")
 	public String cartPay(HttpServletRequest req,Model model) {
 		logger.info("[url => /cartPay.od]");
 		
 		service.cartPay(req,model);
+		
 		return "product/purchasingAction";
 	}
 }

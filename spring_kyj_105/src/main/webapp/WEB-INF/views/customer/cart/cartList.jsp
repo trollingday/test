@@ -28,7 +28,7 @@ function cartRemove() {
 
 function purchasing() {
 	
-	var charge = 3000;
+	var fee = document.getElementById("fee").value;
 	var checkBox = document.getElementsByName("cardId");
 	var arr = new Array;
 	for(var i=0;i<checkBox.length;i++){
@@ -37,7 +37,7 @@ function purchasing() {
 		}
 	}
 	
-	window.location='${path}/cartPay.od?${_csrf.parameterName}=${_csrf.token}&cartId='+arr;
+	window.location='${path}/cartPay.od?${_csrf.parameterName}=${_csrf.token}&cartId='+arr+'&fee='+fee;
 
 }
 
@@ -110,32 +110,31 @@ function purchasing() {
 		   							<c:forEach var="row" items="${cartbox}">									
 										<c:set var= "total" value="${total + row.getQuantity()*row.getPrice()}"/>	
 									</c:forEach>
-									<c:out value="${total}"/>			
+									<c:out value="${total}"/>		
+									<c:choose> 
+										<c:when test="${total > 30000}">
+											<c:set var = "fee" value = "0" />
+										</c:when> 
+										<c:otherwise>
+											<c:set var = "fee" value = "3000" />
+										</c:otherwise> 
+									</c:choose> 									
      							</c:if>		
 								</td>
 							</tr>
 							<tr>
 								<th> * 배송비 </th>
 								<td>
-									${charge}
+									<input type="text" id="fee" value='<c:out value="${fee}"/>' />	
 								</td>
 							</tr>				
 							<tr>
 								<th>* 결제 예정 금액</th>
 								<td>
-									<c:set var= "total" value="${total + charge}"/>
-									<c:out value="${total}"/>	
+									<c:out value="${total+fee}"/>	
 								</td>
 							</tr>
 							
-							<tr>
-								<th>* 결제 수단</th>
-								<td>
-									<input type="radio" name="chk_info" value="휴대폰결제">휴대폰결제
-									<input type="radio" name="chk_info" value="계좌이체">계좌이체
-								</td>
-							</tr>
-
 							<tr>
 								<td colspan="3" style="border-bottom:none">
 									<br>

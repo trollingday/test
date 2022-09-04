@@ -99,19 +99,28 @@
 							<tr>
 								<th> * 상품 금액 </th>
 								<td>
-								<c:out value="${dto01.getQuantity() * dto01.getPrice()}"/>
+								<c:set var = "total" value = "${dto01.getQuantity() * dto01.getPrice()}" />
+								<c:out value="${total}"/>
+								<c:choose> 
+									<c:when test="${total > 30000}">
+										<c:set var = "fee" value = "0" />
+									</c:when> 
+									<c:otherwise>
+										<c:set var = "fee" value = "3000" />
+									</c:otherwise> 
+								</c:choose> 
 								</td>
 							</tr>
 							<tr>
 								<th> * 배송비 </th>
 								<td>
-									${charge}
+								<c:out value="${fee}"/>									
 								</td>
 							</tr>				
 							<tr>
 								<th>* 결제 예정 금액</th>
 								<td>
-								<input type="text" name="totalPrice" value="<c:out value="${dto01.getQuantity() * dto01.getPrice() + charge}"/>" readonly>
+								<input type="text" name="totalPrice" value="<c:out value="${total + fee}"/>" readonly>
 								</td>
 							</tr>
 							

@@ -329,57 +329,16 @@ public class OrderServiceImpl implements OrderService {
 		model.addAttribute("totalPrice", totalPrice);
 	}
 
-	//장바구니 목록을 보여준다.
 	@Override
-	public void cartList(HttpServletRequest req, Model model) {
-
-		System.out.println("서비스 - cartList");
-		
-		//deliveryfeeDTO box=new deliveryfeeDTO();
-		//int charge = box.getCharge();
-
-		//model.addAttribute("charge", charge);
-	}
-
-	//장바구니 담기
-	@Override
-	public void cartAdd(HttpServletRequest req, Model model) {
-
-		System.out.println("서비스 - cartAdd");
-		
-		//1.productDTO에 상품정보를 집어넣고, 그걸 리스트에 집어넣는다.
-		String pdImg = req.getParameter("pdImg");
-		String pdName = req.getParameter("pdName");
-		String brand = req.getParameter("brand");
-		int pdsize = Integer.parseInt(req.getParameter("pdsize"));
-		int quantity = Integer.parseInt(req.getParameter("quantity"));
-		int price = Integer.parseInt(req.getParameter("price"));
-		
-		//deliveryfeeDTO box=new deliveryfeeDTO();
-		//int charge = box.getCharge();
-		
-		CartDTO dto=new CartDTO();
-		
-		//dto.setPdImg(pdImg);
-		dto.setPdName(pdName);
-		dto.setBrand(brand);
-		dto.setPdsize(pdsize);
-		dto.setQuantity(quantity);
-		dto.setPrice(price);
-		
+	public void cartAdd(HttpServletRequest req, CartDTO dto,Model model) {	
 		List<CartDTO> cartbox = (List<CartDTO>) req.getSession().getAttribute("cartbox");
-		
 		cartbox.add(dto);
-		req.getSession().setAttribute("cartbox",cartbox);
-		//model.addAttribute("charge", charge);				
+		req.getSession().setAttribute("cartbox",cartbox);			
 	}
-
-	//장바구니 빼기
+	
 	@Override
 	public void cartRemove(HttpServletRequest req, Model model) {
 
-		System.out.println("서비스 - cartRemove");
-		
 		String[] cartIds=req.getParameter("cartId").split(",");
 		
 		List<CartDTO> cartbox = (List<CartDTO>) req.getSession().getAttribute("cartbox");
@@ -394,26 +353,17 @@ public class OrderServiceImpl implements OrderService {
 		for(int i=index.length-1;i>-1;i--) {
 			cartbox.remove(index[i]-1);
 		}
-		
-		//deliveryfeeDTO box=new deliveryfeeDTO();
-		//int charge = box.getCharge();
-		
+	
 		req.getSession().setAttribute("cartbox",cartbox);
-		//model.addAttribute("charge", charge);
 	}
 
-	//장바구니 담은 상품 결제
 	@Override
 	public void cartPay(HttpServletRequest req, Model model) {
-		
-		System.out.println("서비스 - cartPay");
-		
+
 		int insertCnt=-99;
 		
 		String[] cartIds=req.getParameter("cartId").split(",");
-		
-		//deliveryfeeDTO box=new deliveryfeeDTO();
-		//int charge = box.getCharge();
+		int fee = Integer.parseInt(req.getParameter("fee"));
 			
 		String id = (String)req.getSession().getAttribute("customerID");
 		
@@ -429,21 +379,37 @@ public class OrderServiceImpl implements OrderService {
 			index[i]=cartId;
 		}
 		
-		//1.인덱스 제일 큰거 부터 주문입력
-		for(int i=index.length-1;i>-1;i--) {
-			CartDTO dto = cartbox.get(i);
-			
-			dto2.setPdName(dto.getPdName());
-			dto2.setBrand(dto.getBrand());
-			dto2.setPdsize(dto.getPdsize());
-			//dto2.setPrice(dto.getPrice()+charge/index.length);
-			dto2.setQuantity(dto.getQuantity());
-			dto2.setOrderStatus("구매요청");
-			dto2.setCusName(dto3.getName());
-			
-			insertCnt = dao.InsertOrder(dto2);
-			System.out.println("cartPay - insertCnt : "+insertCnt);
-					
+		if(fee > 0) {
+			//1.인덱스 제일 큰거 부터 주문입력
+			for(int i=index.length-1;i>-1;i--) {
+				CartDTO dto = cartbox.get(i);
+				
+				dto2.setPdName(dto.getPdName());
+				dto2.setBrand(dto.getBrand());
+				dto2.setPdsize(dto.getPdsize());
+				dto2.setTotalPrice(dto.getPrice()+fee/index.length);
+				dto2.setQuantity(dto.getQuantity());
+				dto2.setOrderStatus("구매요청");
+				dto2.setCusName(dto3.getName());
+				
+				insertCnt = dao.InsertOrder(dto2);
+						
+			}
+		} else {
+			for(int i=index.length-1;i>-1;i--) {
+				CartDTO dto = cartbox.get(i);
+				
+				dto2.setPdName(dto.getPdName());
+				dto2.setBrand(dto.getBrand());
+				dto2.setPdsize(dto.getPdsize());
+				dto2.setTotalPrice(dto.getPrice());
+				dto2.setQuantity(dto.getQuantity());
+				dto2.setOrderStatus("구매요청");
+				dto2.setCusName(dto3.getName());
+				
+				insertCnt = dao.InsertOrder(dto2);
+						
+			}			
 		}
 		
 		//1.인덱스 제일 큰거 부터 삭제
@@ -454,6 +420,7 @@ public class OrderServiceImpl implements OrderService {
 		req.getSession().setAttribute("cartbox",cartbox);
 		
 		model.addAttribute("insertCnt", insertCnt);	
+
 	}
 	
 }

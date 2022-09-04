@@ -15,24 +15,24 @@
 <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 <script>
 
-var array = [];
+var array=[]
 
-for(var i=0;i<12;i++){
-	array[i]=${totalPrice[i]}	
-}
-		
+<c:forEach items="${totalPrice}" var="row">
+	array.push(${row});
+</c:forEach>
+
 //차트 정보 설정
 function drawVisualization() {
 	
 	//차트 데이터
 	var data = google.visualization.arrayToDataTable([
-		['-','1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'],
-		['-',array[0],array[1],array[2],array[3],array[4],array[5],array[6],array[7],array[8],array[9],array[10],array[11]]
+		[' ','1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'],
+		[' ',array[0],array[1],array[2],array[3],array[4],array[5],array[6],array[7],array[8],array[9],array[10],array[11]]
 	]);
 	
 	//차트디자인
 	var options = {
-			title : '월별 매출액',
+			title : '월별 판매금액',
 			vAxis : {title: '매출액'},
 			hAxis : {title: '월별'},
 			width : 1000,
@@ -54,7 +54,7 @@ function loadChart(){
 
 $(function(){
 	loadChart();
-});
+})
 
 </script>
 

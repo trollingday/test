@@ -8,7 +8,7 @@ public class OrderDTO {
 	private String pdName;
 	private String brand;
 	private int pdsize;
-	private int price;
+	private int totalPrice;
 	private int quantity;
 	private String orderStatus;
 	private String cusName;
@@ -38,11 +38,11 @@ public class OrderDTO {
 	public void setPdsize(int pdsize) {
 		this.pdsize = pdsize;
 	}
-	public int getPrice() {
-		return price;
+	public int getTotalPrice() {
+		return totalPrice;
 	}
-	public void setPrice(int price) {
-		this.price = price;
+	public void setTotalPrice(int totalPrice) {
+		this.totalPrice = totalPrice;
 	}
 	public int getQuantity() {
 		return quantity;
@@ -72,8 +72,8 @@ public class OrderDTO {
 	@Override
 	public String toString() {
 		return "OrderDTO [orderNo=" + orderNo + ", pdName=" + pdName + ", brand=" + brand + ", pdsize=" + pdsize
-				+ ", price=" + price + ", quantity=" + quantity + ", orderStatus=" + orderStatus + ", cusName="
-				+ cusName + ", orderDate=" + orderDate + "]";
+				+ ", totalPrice=" + totalPrice + ", quantity=" + quantity + ", orderStatus=" + orderStatus
+				+ ", cusName=" + cusName + ", orderDate=" + orderDate + "]";
 	}
-
+	
 }

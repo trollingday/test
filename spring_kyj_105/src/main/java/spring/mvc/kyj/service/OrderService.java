@@ -5,6 +5,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.ui.Model;
 
+import spring.mvc.kyj.dto.CartDTO;
 import spring.mvc.kyj.dto.OrderDTO;
 
 public interface OrderService {
@@ -33,15 +34,9 @@ public interface OrderService {
 	
 	public void saleChart(Model model);
 	
-	//장바구니 목록
-	public void cartList(HttpServletRequest req, Model model);
-	
-	//장바구니에 담기
-	public void cartAdd(HttpServletRequest req, Model model);
-	
-	//장바구니에 빼기
+	public void cartAdd(HttpServletRequest req, CartDTO dto,Model model);
+
 	public void cartRemove(HttpServletRequest req, Model model);
 	
-	//장바구니 담은 물건 결제
 	public void cartPay(HttpServletRequest req, Model model);
 }

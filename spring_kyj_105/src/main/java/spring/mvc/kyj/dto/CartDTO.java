@@ -1,12 +1,20 @@
 package spring.mvc.kyj.dto;
 
 public class CartDTO {
-
+	
+	private String pdImg;
 	private String pdName;
 	private String brand;
 	private int pdsize;
 	private int price;
 	private int quantity;
+	
+	public String getPdImg() {
+		return pdImg;
+	}
+	public void setPdImg(String pdImg) {
+		this.pdImg = pdImg;
+	}
 	
 	public String getPdName() {
 		return pdName;
