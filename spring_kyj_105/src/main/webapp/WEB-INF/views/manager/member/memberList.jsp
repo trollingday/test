@@ -35,6 +35,18 @@
 				<!-- 우측내용 시작 -->
 				<div id="right">
 					<h2 align="center">회원목록</h2>
+					<form action="${path}/memberKeyword.sc?${_csrf.parameterName}=${_csrf.token}" method="post">
+						<div>
+							<select name="selectBox">
+								<option value="1">아이디</option> 
+								<option value="2">이름</option> 
+								<option value="3">주소</option> 
+							</select>
+							<input name="keyword" type="text"></input>
+							<input name="pageNum" type="hidden" value="1"></input>
+							<button name="search">검색</button>
+						</div>	
+					</form>				
 					<div class="table_div">
    						<table style="width:1000px" align="center">
    							<tr>

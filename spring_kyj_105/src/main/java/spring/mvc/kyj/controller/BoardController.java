@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
 
+import spring.mvc.kyj.common.Pagination;
+import spring.mvc.kyj.dao.BoardDAO;
 import spring.mvc.kyj.dto.BoardCommentDTO;
 import spring.mvc.kyj.dto.BoardDTO;
 import spring.mvc.kyj.service.BoardServiceImpl;
@@ -24,6 +26,9 @@ public class BoardController {
 	
 	@Autowired
 	BoardServiceImpl service;
+	
+	@Autowired
+	BoardDAO dao;
 		
 	//--------------- [Q&A게시판] -----------------------
 	
@@ -31,8 +36,23 @@ public class BoardController {
 	@RequestMapping("qboardList.ad")
 	public ModelAndView qboardList(String pageNum) {
 		logger.info("[url => qboardList.ad]");
+		
+		//페이징처리 계산
+		Pagination paging = new Pagination(pageNum);
+		int total=dao.boardCnt();
+		paging.setTotalCount(total);
+		
+		//페이징처리된 게시물 데이터 받아오기
+		Map<String, Object> map=new HashMap<String, Object>();
+		map.put("start", paging.getStartRow());
+		map.put("end", paging.getEndRow());	
 				
-		ModelAndView mav = service.boardList(pageNum);
+		List<BoardDTO> boardBox = service.boardList(map);
+		
+		ModelAndView mav = new ModelAndView();	
+		mav.setViewName("board/qna/boardList");
+		mav.addObject("boardBox", boardBox);
+		mav.addObject("paging",paging);
 		
 		return mav;
 	}
@@ -49,7 +69,11 @@ public class BoardController {
 	public ModelAndView qboard_insertAction(MultipartHttpServletRequest req, BoardDTO dto) {
 		logger.info("[url => qboard_insertAction.ad]");
 		
-		ModelAndView mav = service.boardInsert(req, dto);
+		int insertCnt = service.boardInsert(req, dto);
+		
+		ModelAndView mav = new ModelAndView();	
+		mav.setViewName("board/qna/boardList");
+		mav.addObject("insertCnt", insertCnt);
 		
 		return mav;
 	}
@@ -60,7 +84,11 @@ public class BoardController {
 		logger.info("[url => qboard_detailAction.ad]");
 			
 		//특정게시글 상세데이터를 가져온다.
-		ModelAndView mav = service.boardDetail(num);
+		BoardDTO dto = service.boardDetail(num);
+		
+		ModelAndView mav = new ModelAndView();	
+		mav.setViewName("board/qna/boardDetail");
+		mav.addObject("dto", dto);
 		
 		return mav;
 	}
@@ -72,7 +100,22 @@ public class BoardController {
 	public ModelAndView qboardList_admin(String pageNum) {
 		logger.info("[url => qboardList_admin.ad]");
 				
-		ModelAndView mav = service.boardList(pageNum);
+		//페이징처리 계산
+		Pagination paging = new Pagination(pageNum);
+		int total=dao.boardCnt();
+		paging.setTotalCount(total);
+		
+		//페이징처리된 게시물 데이터 받아오기
+		Map<String, Object> map=new HashMap<String, Object>();
+		map.put("start", paging.getStartRow());
+		map.put("end", paging.getEndRow());	
+				
+		List<BoardDTO> boardBox = service.boardList(map);
+		
+		ModelAndView mav = new ModelAndView();	
+		mav.setViewName("manager/board/qna/boardList");
+		mav.addObject("boardBox", boardBox);
+		mav.addObject("paging",paging);
 		
 		return mav;
 	}
@@ -82,7 +125,12 @@ public class BoardController {
 	public ModelAndView qboard_detailAction_admin(int num) {
 		logger.info("[url => qboard_detailAction_admin.ad]");
 				
-		ModelAndView mav = service.boardDetail(num);
+		//특정게시글 상세데이터를 가져온다.
+		BoardDTO dto = service.boardDetail(num);
+		
+		ModelAndView mav = new ModelAndView();	
+		mav.setViewName("manager/qna/boardDetail");
+		mav.addObject("dto", dto);
 		
 		return mav;
 	}

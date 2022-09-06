@@ -8,7 +8,6 @@ public class BoardDTO {
 	private String title;	//글제목
 	private String content;	//글내용
 	private String writer;	//작성자
-	private String password;	//수정, 삭제용 비밀번호
 	private int readCnt;	//조회수
 	private Date regDate;	//작성일
 	private int commentCount;	//댓글갯수
@@ -48,14 +47,6 @@ public class BoardDTO {
 		this.writer = writer;
 	}
 
-	public String getPassword() {
-		return password;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
-	}
-
 	public int getReadCnt() {
 		return readCnt;
 	}
@@ -91,7 +82,7 @@ public class BoardDTO {
 	@Override
 	public String toString() {
 		return "BoardDTO [num=" + num + ", title=" + title + ", content=" + content + ", writer=" + writer
-				+ ", password=" + password + ", readCnt=" + readCnt + ", regDate=" + regDate + ", commentCount="
+			    + ", readCnt=" + readCnt + ", regDate=" + regDate + ", commentCount="
 				+ commentCount + ", pdImg=" + pdImg + "]";
 	}
 

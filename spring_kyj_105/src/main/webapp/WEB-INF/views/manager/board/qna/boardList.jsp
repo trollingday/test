@@ -36,6 +36,18 @@
 				<!-- 우측내용 시작 -->
 				<div id="right">
 					<h2 align="center">Q&A게시판 관리</h2>
+					<form action="${path}/boardKeyword.sc?${_csrf.parameterName}=${_csrf.token}" method="post">
+						<div>
+							<select name="selectBox">
+								<option value="1">글쓴이</option> 
+								<option value="2">글제목</option> 
+								<option value="3">글내용</option> 
+							</select>
+							<input name="keyword" type="text"></input>
+							<input name="pageNum" type="hidden" value="1"></input>
+							<button type="submit" name="search">검색</button>
+						</div>
+					</form>						
    					<div class="table_div">
    						<table style="width:1000px;" align="center" >
    						
@@ -77,6 +89,7 @@
 									<c:if test="${paging.endPage < paging.pageCount}">
 										<a href="${path}/qboardList.ad?pageNum=${paging.next}">[다음]</a>
 									</c:if>
+									
 								 </td>
 							 </tr>	
 							 					

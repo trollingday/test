@@ -35,6 +35,18 @@
 				<!-- 우측내용 시작 -->
 				<div id="right">
 					<h2 align="center">재고목록</h2>
+					<form action="${path}/productKeyword.sc?${_csrf.parameterName}=${_csrf.token}" method="post">
+						<div>
+							<select name="selectBox">
+								<option value="1">상품명</option> 
+								<option value="2">브랜드</option> 
+								<option value="3">판매상태</option> 
+							</select>
+							<input name="keyword" type="text"></input>
+							<input name="pageNum" type="hidden" value="1"></input>
+							<button name="search">검색</button>
+						</div>
+					</form>
 					<div class="table_div">
    						<table style="width:1000px" align="center">
    							<tr>

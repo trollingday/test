@@ -3,9 +3,152 @@
 <!DOCTYPE mapper
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-
-<mapper namespace="#">
+  
+<mapper namespace="spring.mvc.kyj.dao.SearchDAO">
       
+	<select id="searchBoardList" resultType="spring.mvc.kyj.dto.BoardDTO" parameterType="java.util.Map"> 
+		SELECT * FROM 
+		(SELECT NUM, title, pdImg, content, writer, readCnt, regDate, ROWNUM AS RNUM
+		FROM mvc_board_tbl
+		WHERE 1 = 1
+		<choose>
+			<when test="type == 1"> AND writer LIKE '%'||#{keyword}||'%' </when>
+			<when test="type == 2"> AND TITLE LIKE '%'||#{keyword}||'%' </when>
+			<when test="type == 3"> AND CONTENT LIKE '%'||#{keyword}||'%' </when>	
+			<otherwise> </otherwise>
+		</choose>
+		ORDER BY NUM)
+		<![CDATA[ WHERE RNUM >= #{start} and RNUM <= #{end} ]]>
+	</select>
+	
+	<select id="searchBoardNewNum" resultType="Integer">
+		SELECT 
+		COUNT(*)
+		FROM mvc_board_tbl
+		WHERE 1 = 1
+		<choose>
+			<when test="type == 1"> AND writer LIKE '%'||#{keyword}||'%' </when>
+			<when test="type == 2"> AND TITLE LIKE '%'||#{keyword}||'%' </when>
+			<when test="type == 3"> AND CONTENT LIKE '%'||#{keyword}||'%' </when>	
+			<otherwise> </otherwise>
+		</choose>
+		ORDER BY NUM
+	</select>
+ 
+	<select id="searchMemberList" resultType="spring.mvc.kyj.dto.CustomerDTO" parameterType="java.util.Map"> 
+		SELECT * FROM 
+		(SELECT id, password, name, birthday, address, hp, email, regDate, ROWNUM AS RNUM
+		FROM mvc_customer_tbl
+		WHERE authority = 'ROLE_USER'
+		<choose>
+			<when test="type == 1"> AND ID LIKE '%'||#{keyword}||'%' </when>
+			<when test="type == 2"> AND NAME LIKE '%'||#{keyword}||'%' </when>
+			<when test="type == 3"> AND ADDRESS LIKE '%'||#{keyword}||'%' </when>		
+			<otherwise> </otherwise>
+		</choose>
+		ORDER BY ID)
+		<![CDATA[ WHERE RNUM >= #{start} and RNUM <= #{end} ]]>
+	</select>
+	
+	<select id="searchMemberNewNum" resultType="Integer">
+		SELECT 
+		COUNT(*)
+		FROM mvc_customer_tbl
+		WHERE 1 = 1
+		<choose>
+			<when test="type == 1"> AND ID LIKE '%'||#{keyword}||'%' </when>
+			<when test="type == 2"> AND NAME LIKE '%'||#{keyword}||'%' </when>
+			<when test="type == 3"> AND ADDRESS LIKE '%'||#{keyword}||'%' </when>	
+			<otherwise> </otherwise>
+		</choose>
+		ORDER BY ID
+	</select>
 
-    
+	<select id="searchOrderList" resultType="spring.mvc.kyj.dto.OrderDTO" parameterType="java.util.Map"> 
+		SELECT * FROM 
+		(SELECT orderNo, pdName, brand, pdsize, price, quantity, orderStatus, cusName, orderdate, ROWNUM AS RNUM
+		FROM mvc_order_tbl
+		WHERE 1 = 1
+		<choose>
+			<when test="type == 1"> AND PDNAME LIKE '%'||#{keyword}||'%' </when>
+			<when test="type == 2"> AND BRAND LIKE '%'||#{keyword}||'%' </when>
+			<when test="type == 3"> AND CUSNAME LIKE '%'||#{keyword}||'%' </when>	
+			<otherwise> </otherwise>
+		</choose>
+		ORDER BY orderNo)
+		<![CDATA[ WHERE RNUM >= #{start} and RNUM <= #{end} ]]>
+	</select>
+	
+	<select id="searchOrderNewNum" resultType="Integer">
+		SELECT 
+		COUNT(*)
+		FROM mvc_order_tbl
+		WHERE 1 = 1
+		<choose>
+			<when test="type == 1"> AND PDNAME LIKE '%'||#{keyword}||'%' </when>
+			<when test="type == 2"> AND BRAND LIKE '%'||#{keyword}||'%' </when>
+			<when test="type == 3"> AND CUSNAME LIKE '%'||#{keyword}||'%' </when>	
+			<otherwise> </otherwise>
+		</choose>
+		ORDER BY orderNo
+	</select>
+
+	<select id="searchRefundList" resultType="spring.mvc.kyj.dto.OrderDTO" parameterType="java.util.Map"> 
+		SELECT * FROM 
+		(SELECT orderNo, pdName, brand, pdsize, price, quantity, orderStatus, cusName, orderdate, ROWNUM AS RNUM
+		FROM mvc_order_tbl
+		WHERE orderStatus = '환불요청'
+		<choose>
+			<when test="type == 1"> AND PDNAME LIKE '%'||#{keyword}||'%' </when>
+			<when test="type == 2"> AND BRAND LIKE '%'||#{keyword}||'%' </when>
+			<when test="type == 3"> AND CUSNAME LIKE '%'||#{keyword}||'%' </when>	
+			<otherwise> </otherwise>
+		</choose>
+		ORDER BY orderNo)
+		<![CDATA[ WHERE RNUM >= #{start} and RNUM <= #{end} ]]>
+	</select>
+	
+	<select id="searchRefundNewNum" resultType="Integer">
+		SELECT 
+		COUNT(*)
+		FROM mvc_order_tbl
+		WHERE orderStatus = '환불요청'
+		<choose>
+			<when test="type == 1"> AND PDNAME LIKE '%'||#{keyword}||'%' </when>
+			<when test="type == 2"> AND BRAND LIKE '%'||#{keyword}||'%' </when>
+			<when test="type == 3"> AND CUSNAME LIKE '%'||#{keyword}||'%' </when>	
+			<otherwise> </otherwise>
+		</choose>
+		ORDER BY orderNo
+	</select>
+
+	<select id="searchProductList" resultType="spring.mvc.kyj.dto.ProductDTO" parameterType="java.util.Map"> 
+		SELECT * FROM 
+		(SELECT pdNo, pdName, pdImg, brand, pdsize, price, quantity, status, indate, ROWNUM AS RNUM
+		FROM mvc_product_tbl
+		WHERE 1 = 1
+		<choose>
+			<when test="type == 1"> AND PDNAME LIKE '%'||#{keyword}||'%' </when>
+			<when test="type == 2"> AND BRAND LIKE '%'||#{keyword}||'%' </when>
+			<when test="type == 3"> AND STATUS LIKE '%'||#{keyword}||'%' </when>	
+			<otherwise> </otherwise>
+		</choose>
+		ORDER BY pdNo)
+		<![CDATA[ WHERE RNUM >= #{start} and RNUM <= #{end} ]]>
+	</select>
+	
+	<select id="searchProductNewNum" resultType="Integer">
+		SELECT 
+		COUNT(*)
+		FROM mvc_product_tbl
+		WHERE 1 = 1
+		<choose>
+			<when test="type == 1"> AND PDNAME LIKE '%'||#{keyword}||'%' </when>
+			<when test="type == 2"> AND BRAND LIKE '%'||#{keyword}||'%' </when>
+			<when test="type == 3"> AND STATUS LIKE '%'||#{keyword}||'%' </when>	
+			<otherwise> </otherwise>
+		</choose>
+		ORDER BY pdNo
+	</select>
+				   
 </mapper>  
