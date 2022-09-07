@@ -89,6 +89,23 @@
 									<c:if test="${paging.endPage < paging.pageCount}">
 										<a href="${path}/productList?pageNum=${paging.next}">[다음]</a>
 									</c:if>
+									
+									<!-- 페이징처리2 -->
+									<!-- 이전버튼 활성화 여부 -->
+									<c:if test="${paging2.startPage > 10}">
+										<a href="${path}/boardKeyword.sc?selectBox=${searchMap['type']}&keyword=${searchMap['keyword']}&pageNum=${paging.prev}">[이전]</a>
+									</c:if>
+									<!-- 페이지번호 처리 -->
+									<c:if test="${paging2!=null}">
+										<c:forEach var="num" begin="${paging2.startPage}" end="${paging2.endPage}">
+											<a href="${path}/boardKeyword.sc?selectBox=${searchMap['type']}&keyword=${searchMap['keyword']}&pageNum=${num}">${num}</a>
+										</c:forEach>
+									</c:if>
+									<!-- 다음버튼 활성화 여부 -->
+									<c:if test="${paging2.endPage < paging2.pageCount}">
+										<a href="${path}/boardKeyword.sc?selectBox=${searchMap['type']}&keyword=${searchMap['keyword']}&pageNum=${paging.next}">[다음]</a>
+									</c:if>
+									
 								</td>
 							 </tr>		
 							 											

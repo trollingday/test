@@ -116,7 +116,7 @@ public class BoardController {
 		mav.setViewName("manager/board/qna/boardList");
 		mav.addObject("boardBox", boardBox);
 		mav.addObject("paging",paging);
-		
+				
 		return mav;
 	}
 	

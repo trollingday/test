@@ -49,7 +49,8 @@ public class SearchController {
 		ModelAndView mav = new ModelAndView();
 		mav.setViewName("manager/board/qna/boardList");
 		mav.addObject("boardBox", boardlist);
-		//mav.addObject("paging2",paging);
+		mav.addObject("paging2",paging);
+		mav.addObject("searchMap",searchMap);
 
 		return mav;								
 	} 
@@ -77,7 +78,8 @@ public class SearchController {
 		ModelAndView mav = new ModelAndView();
 		mav.setViewName("manager/member/memberList");
 		mav.addObject("memberBox", memberlist);
-		//mav.addObject("paging2",paging);
+		mav.addObject("paging2",paging);
+		mav.addObject("searchMap",searchMap);
 
 		return mav;								
 	} 
@@ -105,7 +107,8 @@ public class SearchController {
 		ModelAndView mav = new ModelAndView();
 		mav.setViewName("manager/order/orderList");
 		mav.addObject("OrderBox", orderlist);
-		//mav.addObject("paging2",paging);
+		mav.addObject("paging2",paging);
+		mav.addObject("searchMap",searchMap);
 
 		return mav;								
 	} 
@@ -133,7 +136,8 @@ public class SearchController {
 		ModelAndView mav = new ModelAndView();
 		mav.setViewName("manager/order/refundList");
 		mav.addObject("refundBox", refundlist);
-		//mav.addObject("paging2",paging);
+		mav.addObject("paging2",paging);
+		mav.addObject("searchMap",searchMap);
 
 		return mav;								
 	}
@@ -161,7 +165,8 @@ public class SearchController {
 		ModelAndView mav = new ModelAndView();
 		mav.setViewName("manager/stock/productList");
 		mav.addObject("productBox", productlist);
-		//mav.addObject("paging2",paging);
+		mav.addObject("paging2",paging);
+		mav.addObject("searchMap",searchMap);
 
 		return mav;								
 	}
